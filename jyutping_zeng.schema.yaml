@@ -74,13 +74,15 @@ engine:
     - reverse_lookup_filter@cangjie_reverse_lookup
     #- cjk_minifier  # 令 script_translator 支持擴展字符集開關
 
-simplifier:
+simplifier:  # 繁簡轉換
   tips: all
   tags: [ abc, pinyin, cangjie ]
   option_name: simplification
-  #opencc_config: t2s.json
+  #opencc_config: t2s.json  # 默認：繁轉簡
+  #opencc_config: t2hk.json  # 轉爲香港用字
+  #opencc_config: t2tw.json  # 轉爲臺灣用字
 
-speller:
+speller:  # 拼寫規則
   alphabet: zyxwvutsrqponmlkjihgfedcba
   delimiter: " '"
   algebra:

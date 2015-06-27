@@ -124,10 +124,10 @@ custom_table:
   enable_sentence: false
   initial_quality: 0.50  # 該轉譯器出字優先度
 
-# 輸入【P】進入漢語拼音模式；輸入【;】關閉模式。
+# 輸入【V】進入漢語拼音模式；輸入【;】關閉模式。
 pinyin:
   tag: pinyin
-  prefix: 'P'
+  prefix: 'V'
   suffix: ';'
   tips: 【漢拼】
   closing_tips: 【粵拼】
@@ -139,10 +139,10 @@ pinyin:
     - xform/([jqxy])v/$1u/
   initial_quality: 0.1	# 該轉譯器出字優先度
 
-# 輸入【C】進入倉頡（蒼頡）模式；輸入【;】關閉模式。
+# 輸入【I】進入倉頡（蒼頡）模式；輸入【;】關閉模式。
 cangjie:
   tag: cangjie
-  prefix: 'C'
+  prefix: 'I'
   suffix: ';'
   tips: 【蒼頡】
   closing_tips: 【粵拼】
@@ -161,11 +161,11 @@ recognizer:
     punct: ^/[0-9]?[a-z]*$
     email: ^[a-zA-Z][-_.0-9a-z]*@.*$
     url: ^(www\.|https?:|ftp:|mailto:).*$
-    pinyin: (?<![`A-Z])P[a-z']*;?$
-    cangjie: (?<![`A-Z])C[a-z']*;?$
+    pinyin: (?<![`A-Z])V[a-z']*;?$
+    cangjie: (?<![`A-Z])I[a-z']*;?$
     reverse_lookup: "`[a-z]*;?$"
-    pinyin_lookup: "`P[a-z]*;?$"
-    cangjie_lookup: "`C[a-z]*;?$"
+    pinyin_lookup: "`V[a-z]*;?$"
+    cangjie_lookup: "`I[a-z]*;?$"
 
 # 輸入【`】進入混合反查模式；輸入【;】關閉模式。
 reverse_lookup:
@@ -178,10 +178,10 @@ reverse_lookup:
     - pinyin_lookup
     - cangjie_lookup
 
-# 輸入【`P】進入漢字拼音反查模式；輸入【;】關閉模式。
+# 輸入【`V】進入漢字拼音反查模式；輸入【;】關閉模式。
 pinyin_lookup:
   tag: pinyin_lookup
-  prefix: '`P'
+  prefix: '`V'
   suffix: ';'
   tips: 【漢拼反查】
   closing_tips: 【粵拼】
@@ -189,10 +189,10 @@ pinyin_lookup:
   preedit_format: *pinyin_preedit
   initial_quality: 1	# 該轉譯器出字優先度
 
-# 輸入【`C】進入倉頡（蒼頡）反查模式；輸入【;】關閉模式。
+# 輸入【`I】進入倉頡（蒼頡）反查模式；輸入【;】關閉模式。
 cangjie_lookup:
   tag: cangjie_lookup
-  prefix: '`C'
+  prefix: '`I'
   suffix: ';'
   tips: 【蒼頡反查】
   closing_tips: 【粵拼】

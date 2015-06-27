@@ -6,10 +6,10 @@ if [[ ! -r $1 ]]; then
   exit -1
 fi
 
-while IFS="	" read -r a b c; do
+while IFS=$'\t' read -r a b c; do
   if [[ \
     $a =~ ^U\+[0-9A-Z]+$ && \
-    $b =~ ^k(Semantic|Simplified|SpecializedSemantic|Traditional|Z)Variant$ && \
+    $b =~ ^k[a-zA-Z]+Variant$ && \
     $c =~ ^( ?U\+[0-9A-Z]+(<[^ ]+)?)+$ ]]
   then
     case $b in
@@ -29,7 +29,7 @@ while IFS="	" read -r a b c; do
         b="寫法差異"
         ;;
       *)
-        exit -1
+        b="未知錯誤"
     esac
     printf '%s:%b\t%s\t' $a ${a/#U+/\\U} $b
     IFS=" "
@@ -55,4 +55,4 @@ echo "Mathews	Mathews' Chinese-English dictionary	ISBN:0674123506"
 echo "MeyerWempe	Student's Cantonese-English Dictionary	1947"
 echo "Phonetic	Ten Thousand Characters: An Analytic Dictionary	1980"
 echo "Tang	T'ang Poetic Vocabulary	1976"
-echo "XHC1983	现代汉语词典	7100000440"
+echo "XHC1983	现代汉语词典	ISBN:7100000440"

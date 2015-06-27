@@ -12347,4 +12347,4 @@ Mathews	Mathews' Chinese-English dictionary	ISBN:0674123506
 MeyerWempe	Student's Cantonese-English Dictionary	1947
 Phonetic	Ten Thousand Characters: An Analytic Dictionary	1980
 Tang	T'ang Poetic Vocabulary	1976
-XHC1983	现代汉语词典	7100000440
+XHC1983	现代汉语词典	ISBN:7100000440

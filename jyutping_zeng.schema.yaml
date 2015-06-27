@@ -137,7 +137,7 @@ pinyin:
     - xform/([jqxy])v/$1u/
   initial_quality: 0.1	# 該轉譯器出字優先度
 
-# 輸入【C】進入蒼頡六模式；輸入【;】關閉模式。
+# 輸入【C】進入倉頡（蒼頡）模式；輸入【;】關閉模式。
 cangjie:
   tag: cangjie
   prefix: 'C'
@@ -148,9 +148,9 @@ cangjie:
   dictionary: *cangjie_dict
   preedit_format: &cangjie_preedit
     # 第五代
-    #- xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田難卜符|
+    - xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田難卜符|
     # 傳說中的第六代
-    - xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田止卜片|
+    #- xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田止卜片|
   initial_quality: 0.1	# 該轉譯器出字優先度
 
 recognizer:
@@ -187,7 +187,7 @@ pinyin_lookup:
   preedit_format: *pinyin_preedit
   initial_quality: 1	# 該轉譯器出字優先度
 
-# 輸入【`C】進入蒼頡六反查模式；輸入【;】關閉模式。
+# 輸入【`C】進入倉頡（蒼頡）反查模式；輸入【;】關閉模式。
 cangjie_lookup:
   tag: cangjie_lookup
   prefix: '`C'

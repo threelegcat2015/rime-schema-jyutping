@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>RIME TSV 碼表排序工具</title>
+  <style>
+    html, body {
+      padding: 0;
+      font-size: 16px;
+    }
+    form {
+      width: 500px;
+      margin: auto;
+    }
+    .title {
+      font-size: 2em;
+      text-align: center;
+    }
+    textarea {
+      font-family: monospace;
+      tab-size: 10em;
+      width: 100%;
+      min-height: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <form id="tool" action="javascript:void(0)">
+    <h1 class="title">RIME TSV 碼表排序工具</h1>
+    <div class="buttons">
+      <input type="file" id="import" value="導入表格">
+      <input type="submit" id="sort" value="排序">
+      <input type="submit" id="uniq" value="精簡">
+      <input type="submit" id="export" value="導出表格">
+    </div>
+    <div class="options">
+      <label><input type="radio" name="opt" value="0">按 Unicode/UTF-8 字符編碼排序</label>
+      <br>
+      <label><input type="radio" name="opt" value="1" checked="true">以字音爲主，Unicode/UTF-8 碼爲輔排序。</label>
+      <br>
+      <label><input type="radio" name="opt" value="2">以詞條字數爲主，讀音爲輔排序。</label>
+    </div>
+    <div class="text">
+      <textarea id="data" autofocus="true"></textarea>
+    </div>
+  </form>
+  <script>
+    var FIELDS = 5;
+    var win = window, doc = document;
+    var form = doc.getElementById('tool');
+    var btnImport = doc.getElementById('import');
+    var btnExport = doc.getElementById('export');
+    var btnSort = doc.getElementById('sort');
+    var btnUniq = doc.getElementById('uniq');
+    var textarea = doc.getElementById('data');
+    btnSort.onclick = function () {
+      var opt = form.opt.value;
+      var data = fromTSV(textarea.value);
+      var text;
+      switch (opt) {
+        case '0': text = toTSV(sort0(data)); break;
+        case '1': text = toTSV(sort1(data)); break;
+        case '2': text = toTSV(sort2(data)); break;
+        default: text = '發生錯誤';
+      }
+      textarea.value = text;
+      textarea.select();
+    };
+    btnUniq.onclick = function () {
+      var lines = textarea.value.split(/\r?\n/);
+      var counter = 0;
+      for (var i = 0, l = lines.length; i < l; i++) {
+        if (lines[i] !== lines[i-1]) {
+          lines[counter++] = lines[i];
+        }
+      }
+      lines.splice(counter);
+      textarea.value = lines.join('\n');
+      textarea.select();
+    };
+    btnImport.multiple = false;
+    btnImport.onchange = function (event) {
+      var f = event.dataTransfer ? event.dataTransfer.files[0] : this.files[0];
+      var r = new FileReader();
+      r.onload = function () {
+        textarea.value = r.result;
+        textarea.select();
+      };
+      r.readAsText(f);
+    };
+    btnExport.onclick = function () {
+      var blob = new Blob([textarea.value]);
+      exportFile(blob, 'data.txt');
+    };
+
+    function fromTSV(str) {
+      var lines = str.split(/\r?\n/);
+      var counter = 0;
+      for (var i = 0, l = lines.length; i < l; i++) {
+        var line = lines[i].replace(/^[ \t]+|[ \t]+$/g, '');
+        if (!line) { continue; }
+        var values = line.split('\t', FIELDS);
+        lines[counter++] = values;
+      }
+      lines.splice(counter);
+      return lines;
+    }
+
+    function toTSV(data) {
+      var lines = [];
+      for (var i = 0, l = data.length; i < l; i++) {
+        lines.push(data[i].join('\t'));
+      }
+      return lines.join('\n');
+    }
+
+    function sort0(tsv) {
+      tsv.sort(function (a, b) {
+        for (var i = 0; i < FIELDS; i++) {
+          if (a[i] != null && b[i] != null) {
+            var r = compareCodepoints(toCodePoints(a[i]), toCodePoints(b[i]));
+            if (r !== 0) {
+              return r;
+            }
+          }
+        }
+        return 0;
+      });
+      return tsv;
+    }
+
+    function sort1(tsv) {
+      tsv.sort(function (a, b) {
+        var r = compareCodepoints(toCodePoints(a[1]), toCodePoints(b[1]));
+        if (r !== 0) {
+          return r;
+        }
+        for (var i = 0; i < FIELDS; i++) {
+          if (i !== 1) {
+            var r = compareCodepoints(toCodePoints(a[i]), toCodePoints(b[i]));
+            if (r !== 0) {
+              return r;
+            }
+          }
+        }
+        return 0;
+      });
+      return tsv;
+    }
+
+    function sort2(tsv) {
+      tsv.sort(function (a, b) {
+        var r = compareNumber(toCodePoints(a[0]).length, toCodePoints(b[0]).length);
+        if (r !== 0) {
+          return r;
+        }
+        r = compareCodepoints(toCodePoints(a[1]), toCodePoints(b[1]));
+        if (r !== 0) {
+          return r;
+        }
+        for (var i = 0; i < FIELDS; i++) {
+          if (i !== 1) {
+            var r = compareCodepoints(toCodePoints(a[i]), toCodePoints(b[i]));
+            if (r !== 0) {
+              return r;
+            }
+          }
+        }
+        return 0;
+      });
+      return tsv;
+    }
+
+    function compareCodepoints(a, b) {
+      for (var i = 0; i < a.length && i < b.length; i++) {
+        var r = compareNumber(a[i], b[i]);
+        if (r !== 0) {
+          return r;
+        }
+      }
+      return compareNumber(a.length, b.length);
+    }
+
+    function compareNumber(a, b) {
+      if (a < b) {
+        return -1;
+      } else if (a > b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+
+    function toCodePoints(str) {
+      if (str == null) {
+        return [];
+      }
+      var result = [];
+      var counter = 0;
+      var length = str.length;
+      if (typeof str.codePointAt === 'function') {
+        while (counter < length) {
+          var codepoint = str.codePointAt(counter);
+          if (codepoint != null) {
+            result.push(codepoint);
+            counter += codepoint > 0xFFFF ? 2 : 1;
+          } else {
+            break;
+          }
+        }
+      } else {
+        console.log(str);
+        var value = str.charCodeAt(counter++);
+        if (counter < length && 0xD800 <= value && value <= 0xDBFF) {
+          var extra = str.charCodeAt(counter++);
+          if ((extra & 0xFC00) === 0xDC00) {  // low surrogate
+            result.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+          } else {
+            result.push(value);
+            counter--;
+          }
+        } else {
+          result.push(value);
+        }
+      }
+      return result;
+    }
+
+    function exportFile(file, filename) {
+      var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+      var URL = window.URL || window.webkitURL;
+      var click = function (node) {
+        var downloadEvent = document.createEvent('MouseEvents');
+        downloadEvent.initMouseEvent(
+          'click', true, false, window, 0, 0, 0, 0, 0,
+          false, false, false, false, 0, null
+        );
+        node.dispatchEvent(downloadEvent);
+      };
+      var object_url = URL.createObjectURL(file);
+      //console.log('ObjectURL created: ' + object_url);
+      save_link.href = object_url;
+      save_link.download = filename;
+      save_link.addEventListener('click', function (evt) {
+        setTimeout(function () {
+          URL.revokeObjectURL(object_url);
+          //console.log('ObjectURL revoked: ' + object_url);
+        }, 5000);
+      }, false);
+      click(save_link);
+    }
+  </script>
+</body>
+
+</html>

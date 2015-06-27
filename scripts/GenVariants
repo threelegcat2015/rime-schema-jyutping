@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+
+if [[ ! -r $1 ]]; then
+  echo "USAGE: $0 Unihan_Variants.txt"
+  exit -1
+fi
+
+while IFS="	" read -r a b c; do
+  if [[ \
+    $a =~ ^U\+[0-9A-Z]+$ && \
+    $b =~ ^k(Semantic|Simplified|SpecializedSemantic|Traditional|Z)Variant$ && \
+    $c =~ ^( ?U\+[0-9A-Z]+(<[^ ]+)?)+$ ]]
+  then
+    case $b in
+      kSimplifiedVariant)
+        b="經過簡化"
+        ;;
+      kTraditionalVariant)
+        b="經過繁化"
+        ;;
+      kSemanticVariant)
+        b="基本同義"
+        ;;
+      kSpecializedSemanticVariant)
+        b="偶爾同義"
+        ;;
+      kZVariant)
+        b="寫法差異"
+        ;;
+      *)
+        exit -1
+    esac
+    printf '%s:%b\t%s\t' $a ${a/#U+/\\U} $b
+    IFS=" "
+    i=0
+    for v in $c; do
+      [[ $((i++)) -gt 0 ]] && printf " "
+      v=${v/Matthews/Mathews}
+      v=${v/<k/(}
+      v=${v/,k/,}
+      printf '%s:%b' ${v%(*} ${v/#U+/\\U}
+      [[ $v =~ \( ]] && printf ')'
+    done
+    printf '\n'
+  fi
+done < $1
+
+echo "Cowles	廣州話袖珍字典	ISBN:9622091229"
+echo "Fenn	Fenn's Chinese-English Pocket Dictionary	1979"
+echo "HKGlyph	常用字字形表	ISBN:9629490404"
+echo "HanYu	漢語大字典	ISBN:7540300302"
+echo "Lau	实用粤英词典	1977"
+echo "Mathews	Mathews' Chinese-English dictionary	ISBN:0674123506"
+echo "MeyerWempe	Student's Cantonese-English Dictionary	1947"
+echo "Phonetic	Ten Thousand Characters: An Analytic Dictionary	1980"
+echo "Tang	T'ang Poetic Vocabulary	1976"
+echo "XHC1983	现代汉语词典	7100000440"

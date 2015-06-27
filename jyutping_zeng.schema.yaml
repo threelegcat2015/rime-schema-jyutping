@@ -1,0 +1,222 @@
+##### Rime 拼字方案 ############################################################
+#
+# Jyutping Zeng - 粵拼．正
+# 粵拼真係正！
+#
+# 項目地址：https://github.com/jakwings/rime-schema-jyutping
+#
+################################################################################
+
+schema:
+  schema_id: jyutping_zeng
+  name: 粵拼．正
+  version: '2015.6.27'
+  author:
+    - Jak Wings <https://github.com/jakwings/rime-schema-jyutping>
+  description: |
+    採用香港語言學會粵語拼音方案 http://www.lshk.org
+  dependencies:  # 加載依賴碼表
+    # 漢語拼音
+    - &pinyin_dict luna_pinyin
+    # 第五代倉頡輸入法
+    - &cangjie_dict cangjie5
+    # 傳說中第六代蒼頡
+    #- &cangjie_dict cangjie6
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [ '中文', '西文' ]
+  - name: ascii_punct
+    states: [ '，。', ', .' ]
+  - name: full_shape
+    states: [ '半角', '全角' ]
+  - name: simplification
+    states: [ '漢字', '汉字' ]
+  - name: extended_charset
+    states: [ '通用', '增廣' ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - affix_segmentor@pinyin
+    - affix_segmentor@cangjie
+    - affix_segmentor@pinyin_lookup
+    - affix_segmentor@cangjie_lookup
+    - affix_segmentor@reverse_lookup
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - script_translator
+    - script_translator@custom_script
+    - table_translator@custom_table
+    - script_translator@pinyin
+    - script_translator@cangjie
+    - script_translator@pinyin_lookup
+    - script_translator@cangjie_lookup
+    #- reverse_lookup_translator  # 於 RIME 1.0 後被 reverse_lookup_filter 取代
+  filters:
+    - simplifier
+    - uniquifier
+    - reverse_lookup_filter@pinyin_reverse_lookup
+    - reverse_lookup_filter@cangjie_reverse_lookup
+    #- cjk_minifier  # 令 script_translator 支持擴展字符集開關
+
+simplifier:
+  tips: all
+  tags: [ abc, pinyin, cangjie ]
+  option_name: simplification
+  #opencc_config: t2s.json
+
+speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcba
+  delimiter: " '"
+  algebra:
+    - abbrev/^([a-z]).+$/$1/     # 首字母簡拼
+    - abbrev/^(ng|[gk]w).+$/$1/  # 聲母簡拼
+    - derive/\d//                # 不帶聲調
+
+# 主要轉譯器（音節碼）
+translator:
+  dictionary: &dict jyutping_zeng   # 加載辭典
+  spelling_hints: 7                 # 最大編碼提示字數
+  initial_quality: 0.75             # 該轉譯器出字優先度
+  comment_format: &comment
+    - xform/\d//                    # 去除聲調提示
+    - xform/([a-z]+)( \1)+/\1 /     # 去除重複編碼（僅配合去除聲調）
+    - xform/^ +| +$//               # 去除行首及行尾空格
+
+# 個性化轉譯器（音節碼）
+# 可於用戶配置文件夾中建立碼表 jyutping_zeng_custom_script.txt
+# 內容如：
+#唷	yo	0
+custom_script:
+  dictionary: ''
+  db_class: stabledb
+  user_dict: jyutping_zeng_custom_script
+  enable_completion: true
+  enable_sentence: true
+  initial_quality: 0.85  # 該轉譯器出字優先度
+
+# 個性化轉譯器（形意碼）
+# 可於用戶配置文件夾中建立碼表 jyutping_zeng_custom_table.txt
+# 內容如：
+#user@email.com	xemail	0
+custom_table:
+  dictionary: ''
+  db_class: stabledb
+  user_dict: jyutping_zeng_custom_table
+  enable_completion: false
+  enable_sentence: false
+  initial_quality: 0.50  # 該轉譯器出字優先度
+
+# 輸入【P】進入漢語拼音模式；輸入【;】關閉模式。
+pinyin:
+  tag: pinyin
+  prefix: 'P'
+  suffix: ';'
+  tips: 【漢拼】
+  closing_tips: 【粵拼】
+  enable_charset_filter: true
+  dictionary: *pinyin_dict
+  preedit_format: &pinyin_preedit
+    - xform/([nl])v/$1ü/
+    - xform/([nl])ue/$1üe/
+    - xform/([jqxy])v/$1u/
+  initial_quality: 0.1	# 該轉譯器出字優先度
+
+# 輸入【C】進入蒼頡六模式；輸入【;】關閉模式。
+cangjie:
+  tag: cangjie
+  prefix: 'C'
+  suffix: ';'
+  tips: 【蒼頡】
+  closing_tips: 【粵拼】
+  enable_charset_filter: true
+  dictionary: *cangjie_dict
+  preedit_format: &cangjie_preedit
+    # 第五代
+    #- xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田難卜符|
+    # 傳說中的第六代
+    - xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田止卜片|
+  initial_quality: 0.1	# 該轉譯器出字優先度
+
+recognizer:
+  import_preset: default
+  patterns:
+    punct: ^/[0-9]?[a-z]*$
+    email: ^[a-zA-Z][-_.0-9a-z]*@.*$
+    url: ^(www\.|https?:|ftp:|mailto:).*$
+    pinyin: (?<![`A-Z])P[a-z']*;?$
+    cangjie: (?<![`A-Z])C[a-z']*;?$
+    reverse_lookup: "`[a-z]*;?$"
+    pinyin_lookup: "`P[a-z]*;?$"
+    cangjie_lookup: "`C[a-z]*;?$"
+
+# 輸入【`】進入混合反查模式；輸入【;】關閉模式。
+reverse_lookup:
+  tag: reverse_lookup
+  prefix: '`'
+  suffix: ';'
+  tips: 【反查】
+  closing_tips: 【粵拼】
+  extra_tags:
+    - pinyin_lookup
+    - cangjie_lookup
+
+# 輸入【`P】進入漢字拼音反查模式；輸入【;】關閉模式。
+pinyin_lookup:
+  tag: pinyin_lookup
+  prefix: '`P'
+  suffix: ';'
+  tips: 【漢拼反查】
+  closing_tips: 【粵拼】
+  dictionary: *pinyin_dict
+  preedit_format: *pinyin_preedit
+  initial_quality: 1	# 該轉譯器出字優先度
+
+# 輸入【`C】進入蒼頡六反查模式；輸入【;】關閉模式。
+cangjie_lookup:
+  tag: cangjie_lookup
+  prefix: '`C'
+  suffix: ';'
+  tips: 【蒼頡反查】
+  closing_tips: 【粵拼】
+  dictionary: *cangjie_dict
+  preedit_format: *cangjie_preedit
+  initial_quality: 1	# 該轉譯器出字優先度
+
+pinyin_reverse_lookup:
+  tags: [ pinyin_lookup ]
+  dictionary: *dict
+  overwrite_comment: true   # 覆蓋其他提示
+  comment_format:
+    - xform/^/〔/
+    - xform/$/〕/
+
+cangjie_reverse_lookup:
+  tags: [ cangjie_lookup ]
+  dictionary: *dict
+  overwrite_comment: true   # 覆蓋其他提示
+  comment_format:
+    - xform/^/〔/
+    - xform/$/〕/
+
+key_binder:
+  import_preset: default
+
+punctuator:
+  import_preset: default
+  #import_preset: alternative

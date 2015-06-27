@@ -1,0 +1,44 @@
+##### Rime 編碼方案 ############################################################
+#
+# Jyutping Zeng - 粵拼．正
+# 粵拼真係正！
+#
+# 項目地址：https://github.com/jakwings/rime-schema-jyutping
+#
+# 該文件僅爲測試所用。
+#
+################################################################################
+---
+name: jyutping_zeng-wip
+version: '2015.6.27'
+sort: by_weight
+columns: [ text, code, weight ]
+...
+車呔	ce1 taai1
+菂薂	dik1 sik1
+架生	gaa3 caang1
+幾率	gei2 leot2
+剛才	gong1 coi4
+鑽籠	gyun1 lung1
+咸家	ham4 gaa1
+而今	ji4 gaa1
+霰彈	saan2 daan2
+軚盤	taai5 pun4
+白翁翁	baak4 mung4 mung4
+白雪雪	baak4 syut1 syut1
+光掁掁	gwong1 caang4 caang4
+黑鼆鼆	hak1 mang1 mang1
+黑鼆鼆	hak1 mang6 mang4
+咸唪唥	ham4 baang6 laang6
+咸家鏟	ham4 gaa1 caan2
+紅當當	hung4 dong1 dong6
+可惱也	ko1 naau1 je1
+唔啦更	m4 laa1 gaang1
+無剌剌	mou4 laa1 laa1
+無拉拉	mou4 laa1 laa1
+撒手鐧	saat3 sau2 gaan2
+溼邋邋	sap1 laap6 laap6
+黃黚黚	wong4 gam4 gam4
+乌黢黢	wu1 zeot1 zeot1
+鑽籠鑽罅	gyun1 lung1 gyun1 laa3
+咸家富貴	ham4 gaa1 fu3 gwai3

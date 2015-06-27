@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+help() {
+  echo "USAGE: $0 Unihan_Readings.txt LANG [ Unihan_DictionaryLikeData.txt ]"
+  echo
+  echo "LANG: Cantonese, Mandarin"
+}
+
+generate_tsv_data() {
+  if [[ -r $v_Frequencies ]]; then
+    collect_character_frequencies
+  fi
+  language="k$v_Language"
+  while IFS="	" read -r a b c; do
+    if [[ $b == $language && $a =~ ^U\+[0-9A-Z]+$ ]]; then
+      codepoint=${a#U+}
+      pronunciations=$c
+      frequency=${freqs["0x$codepoint"]}
+      IFS=" "
+      for p in $pronunciations; do
+        printf '%s\t%b\t%s\t%d\n' $codepoint "\\U$codepoint" $p $frequency
+      done
+    fi
+  done < $v_Dictionary
+}
+
+collect_character_frequencies() {
+  while IFS="	" read -r a b c; do
+    if [[ $b == "kFrequency" && $a =~ ^U\+[0-9A-Z]+$ && $c -ge 0 ]]; then
+      codepoint=${a/U+/0x}
+      frequency=$(( 1000 + 100 * (6 - c) ))
+      freqs[$codepoint]=$frequency
+    fi
+  done < $v_Frequencies
+}
+
+
+if [[ ! -r $1 || -z $2 || ! $2 =~ ^(Cantonese|Mandarin)$ ]]; then
+  help
+  exit -1
+fi
+
+declare -r v_Dictionary=$1
+declare -r v_Language=$2
+declare -r v_Frequencies=$3
+declare -a freqs
+
+generate_tsv_data

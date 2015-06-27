@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+
+if [[ ! -r $1 ]]; then
+  echo "USAGE: $0 Unihan_Variants.txt"
+  exit -1
+fi
+
+while IFS="	" read -r a b c; do
+  declare -A trads
+  declare -a trad2simp
+  if [[ $b == "kSimplifiedVariant" && \
+        $a =~ ^U\+[0-9A-Z]+$       && \
+        $c =~ ^( ?U\+[0-9A-Z]+)+$ ]]
+  then
+    trads[$a]=1
+    trad2simp+=($a "$c")
+  fi
+done < $1
+
+for ((i=0, j=1, l=${#trad2simp[*]}; i < l; i+=2, j+=2))
+do
+  t=${trad2simp[i]}
+  simps=${trad2simp[j]}
+  IFS=" "
+  for s in $simps; do
+    if [[ ! ${trads[$s]} ]]; then
+      printf '%b\t%b\n' ${t/#U+/\\U} ${s/#U+/\\U}
+    else
+      printf '%b\t%b*\n' ${t/#U+/\\U} ${s/#U+/\\U}
+    fi
+  done
+done

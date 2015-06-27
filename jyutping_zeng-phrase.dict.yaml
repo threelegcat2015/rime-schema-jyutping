@@ -1,0 +1,16 @@
+##### Rime 編碼方案 ############################################################
+#
+# Jyutping Zeng - 粵拼．正
+# 粵拼真係正！
+#
+# 項目地址：https://github.com/jakwings/rime-schema-jyutping
+#
+# 記錄較短的詞條。
+#
+################################################################################
+---
+name: jyutping_zeng-phrase
+version: '2015.6.27'
+sort: by_weight
+columns: [ text, code, weight ]
+...

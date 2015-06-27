@@ -1,0 +1,86 @@
+##### Rime 編碼方案 ############################################################
+#
+# Jyutping Zeng - 粵拼．正
+# 粵拼真係正！
+#
+# 項目地址：https://github.com/jakwings/rime-schema-jyutping
+#
+# 該碼表爲中西合璧之產物。
+# 如果詞條的英文部分可用英文模式或編碼直接上屏輕鬆鍵入，則不建議將其加入該表。
+# 不過也歡迎以註釋形式加入詞條，讓大家增廣見聞。
+#
+################################################################################
+---
+name: jyutping_zeng-western
+version: '2015.6.27'
+sort: by_weight
+columns: [ text, code, weight ]
+...
+青ＢＢ	ceng1 bi1 bi1
+Ｔ恤	ti1 seot1
+#AA制	ei ei zai
+#BB機	bi bi gei
+#CIB	si ai bi
+#IP	ai pi
+#Miss	mit1 si4
+#O.T.	ou ti
+#OK	o kei
+#O記	ou gei
+#PC	pi si
+#PTU	pi ti jiu
+#TupTup撼	tap tap haam
+#X光	ik si gwong
+#book	buk
+#book位
+#book唔到位	buk m dou wai
+#book機票	buk gei piu
+#book酒店
+#call	ko
+#call機
+#call白車	ko baak ce
+#cancer	ken saa
+#cancer有啲都有得醫嘅	ken saa jau di dou jau dak ji ge
+#cash	ke syu
+#cheap	cip
+#cheap嘢
+#check	cek
+#check吓	cek haa
+#check吓啲貨	cek haa di fo
+#claim	kem
+#claim保險
+#claim稅
+#click	kik
+#click入去
+#cool	ku
+#cut	kat
+#cute	kiu
+#cut咗呢個鏡頭	kat zo ni go ging tau
+#cut短啲頭髮	kat dyun di tau fat
+#fans	feng1 si2
+#fax	fet si
+#feel	fiu
+#foul	fau
+#foul出局
+#friend	fen
+#gag	gek
+#high	haai
+#jacket	zek kek
+#keep	kip
+#label	lei bou
+#out	au
+#paper	pei paa
+#part-time	paak taai
+#party	paat ti
+#passport	paa si pot
+#pizza	pi saa
+#quali	ko li
+#short	sot
+#short short哋	sot sot dei
+#show吓quali喎	sou haa ko li wo
+#sorry	so li
+#sorry囉	so li lo
+#talk	tok
+#tissue	ti su
+#title	taai tou
+#van	wen
+#van仔	weng zai
